@@ -8,6 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Google.Apis.YouTube.v3" Version="1.70.0.3847" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.8" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
@@ -15,8 +17,6 @@
 
   <ItemGroup>
     <Folder Include="Models\Auth\" />
-    <Folder Include="Models\Youtube\" />
-    <Folder Include="Services\Youtube\" />
   </ItemGroup>
 
 </Project>

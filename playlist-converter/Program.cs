@@ -1,5 +1,6 @@
 using playlist_converter.Services.Auth;
 using playlist_converter.Services.Spotify;
+using playlist_converter.Services.Youtube;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,9 @@ builder.Services.AddControllers();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<ISpotifyAuthService, SpotifyAuthService>();
 builder.Services.AddScoped<ISpotifyService, SpotifyService>();
+builder.Services.AddScoped<IYoutubeAuthService, YoutubeAuthService>();
+builder.Services.AddScoped<IYoutubeService, YoutubeService>();
+
 
 // Add Swagger services
 builder.Services.AddEndpointsApiExplorer();
@@ -19,6 +23,15 @@ builder.Services.AddSwaggerGen(c =>
         Title = "Playlist Converter API",
         Version = "v1"
     });
+});
+
+builder.Services.AddCors(policy =>
+{
+    policy.AddPolicy("CorsAllAccessPolicy", opt =>
+        opt.AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+    );
 });
 
 var app = builder.Build();
@@ -34,6 +47,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("CorsAllAccessPolicy");
 
 app.UseAuthorization();
 
