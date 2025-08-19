@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using playlist_converter.Models.Auth;
+using playlist_converter.Models.Youtube;
 using playlist_converter.Services.Auth;
+using playlist_converter.Services.Spotify;
 using playlist_converter.Services.Youtube;
 
 namespace playlist_converter.Controllers
@@ -11,12 +14,21 @@ namespace playlist_converter.Controllers
     {
         private readonly IYoutubeAuthService _authService;
         private readonly IYoutubeService _youtubeService;
+        private readonly ISpotifyService _spotifyService;
+        private readonly ISpotifyAuthService _spotifyAuthService;
         private readonly ILogger<YouTubeController> _logger;
 
-        public YouTubeController(IYoutubeAuthService authService, IYoutubeService youtubeService, ILogger<YouTubeController> logger)
+        public YouTubeController(
+            IYoutubeAuthService authService,
+            IYoutubeService youtubeService,
+            ISpotifyService spotifyService,
+            ISpotifyAuthService spotifyAuthService,
+            ILogger<YouTubeController> logger)
         {
             _authService = authService;
             _youtubeService = youtubeService;
+            _spotifyService = spotifyService;
+            _spotifyAuthService = spotifyAuthService;
             _logger = logger;
         }
 
@@ -104,15 +116,93 @@ namespace playlist_converter.Controllers
             }
         }
 
-        public class CreatePlaylistRequest
+        // POST: api/YouTube/AddFromSpotify
+        [HttpPost("AddFromSpotify")]
+        public async Task<IActionResult> AddTracksFromSpotifyPlaylist([FromBody] AddFromSpotifyRequest request)
         {
-            public string Title { get; set; } = string.Empty;
-            public string PrivacyStatus { get; set; } = string.Empty;
-            public string AccessToken { get; set; } = string.Empty;
-        }
-        public class AuthUrlResponse
-        {
-            public string AuthorizationUrl { get; set; } = string.Empty;
+            if (string.IsNullOrEmpty(request.SpotifyPlaylistId) ||
+                string.IsNullOrEmpty(request.YouTubePlaylistId) ||
+                string.IsNullOrEmpty(request.YouTubeAccessToken))
+            {
+                return BadRequest("SpotifyPlaylistId, YouTubePlaylistId, and YouTubeAccessToken are required");
+            }
+
+            try
+            {
+                // Get Spotify access token
+                var spotifyAccessToken = await _spotifyAuthService.GetAccessTokenAsync();
+                if (string.IsNullOrEmpty(spotifyAccessToken))
+                {
+                    return Unauthorized("Could not obtain Spotify access token");
+                }
+
+                // Get tracks from Spotify playlist
+                var tracks = await _spotifyService.GetSpotifyPlaylistAsync(request.SpotifyPlaylistId, spotifyAccessToken);
+
+                // Skip the first item as it's the playlist name
+                var tracksList = tracks.Skip(1).ToList();
+                var results = new List<object>();
+                int successCount = 0;
+
+                // For each track, search YouTube and add to playlist
+                foreach (var track in tracksList)
+                {
+                    try
+                    {
+                        // Search for the video on YouTube
+                        var videoId = await _youtubeService.SearchVideo(track);
+
+                        if (!string.IsNullOrEmpty(videoId))
+                        {
+                            // Add the video to the YouTube playlist
+                            await _youtubeService.AddToPlaylist(videoId, request.YouTubePlaylistId, request.YouTubeAccessToken);
+
+                            results.Add(new
+                            {
+                                Track = track,
+                                VideoId = videoId,
+                                Status = "Added"
+                            });
+
+                            successCount++;
+                        }
+                        else
+                        {
+                            results.Add(new
+                            {
+                                Track = track,
+                                VideoId = (string)null,
+                                Status = "Not found"
+                            });
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, $"Error adding track '{track}' to YouTube playlist");
+                        results.Add(new
+                        {
+                            Track = track,
+                            Error = ex.Message,
+                            Status = "Error"
+                        });
+                    }
+
+                    // Add a small delay to avoid rate limiting
+                    await Task.Delay(200);
+                }
+
+                return Ok(new
+                {
+                    TotalTracks = tracksList.Count,
+                    SuccessfullyAdded = successCount,
+                    Results = results
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error adding tracks from Spotify playlist to YouTube playlist");
+                return StatusCode(500, "Error processing the request: " + ex.Message);
+            }
         }
     }
 }

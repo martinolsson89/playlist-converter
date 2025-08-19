@@ -21,9 +21,15 @@ namespace playlist_converter.Controllers
             _logger = logger;
         }
 
-        [HttpGet("playlist/{playlistId}")]
-        public async Task<IActionResult> Get()
+        [HttpGet("playlist")]
+        public async Task<IActionResult> Get([FromQuery] string url)
         {
+            if (string.IsNullOrEmpty(url))
+            {
+                _logger.LogError("Playlist URL is null or empty.");
+                return BadRequest("Playlist URL is required.");
+            }
+
             var accessToken = await _spotifyAuthService.GetAccessTokenAsync();
             if (string.IsNullOrEmpty(accessToken))
             {
@@ -33,14 +39,7 @@ namespace playlist_converter.Controllers
 
             try
             {
-                var playlistId = HttpContext.Request.RouteValues["playlistId"]?.ToString();
-                if (string.IsNullOrEmpty(playlistId))
-                {
-                    _logger.LogError("Playlist ID is null or empty.");
-                    return BadRequest("Playlist ID is required.");
-                }
-
-                var tracks = _spotifyService.GetSpotifyPlaylistAsync(playlistId, accessToken).Result;
+                var tracks = await _spotifyService.GetSpotifyPlaylistAsync(url, accessToken);
                 return Ok(tracks);
             }
             catch (Exception ex)
@@ -48,8 +47,6 @@ namespace playlist_converter.Controllers
                 _logger.LogError(ex, "An error occurred while retrieving the Spotify playlist.");
                 return StatusCode(500, "Internal server error");
             }
-
-
         }
     }
 }

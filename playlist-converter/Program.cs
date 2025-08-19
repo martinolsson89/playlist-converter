@@ -12,6 +12,7 @@ builder.Services.AddScoped<ISpotifyAuthService, SpotifyAuthService>();
 builder.Services.AddScoped<ISpotifyService, SpotifyService>();
 builder.Services.AddScoped<IYoutubeAuthService, YoutubeAuthService>();
 builder.Services.AddScoped<IYoutubeService, YoutubeService>();
+builder.Services.AddMemoryCache();
 
 
 // Add Swagger services
