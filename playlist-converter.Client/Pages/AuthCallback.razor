@@ -1,0 +1,31 @@
+@page "/auth-callback"
+@using PlaylistConverter.Client.Services
+@inject NavigationManager Nav
+@inject TokenService Tokens
+
+<p>Completing sign-in...</p>
+
+@code {
+    protected override Task OnInitializedAsync()
+    {
+        var uri = new Uri(Nav.Uri);
+        // Token is in fragment: #access_token=...
+        var fragment = uri.Fragment; // includes leading '#'
+        if (!string.IsNullOrEmpty(fragment) && fragment.StartsWith("#"))
+        {
+            var parts = fragment[1..].Split('&', StringSplitOptions.RemoveEmptyEntries);
+            foreach (var p in parts)
+            {
+                var kv = p.Split('=', 2);
+                if (kv.Length == 2 && kv[0] == "access_token")
+                {
+                    Tokens.YoutubeToken = Uri.UnescapeDataString(kv[1]);
+                    break;
+                }
+            }
+        }
+        // Navigate to home
+        Nav.NavigateTo("/");
+        return Task.CompletedTask;
+    }
+}

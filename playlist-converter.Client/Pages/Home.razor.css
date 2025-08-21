@@ -1,0 +1,267 @@
+﻿.playlist-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.brand-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #1db954 0%, #ff1744 100%);
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    text-align: center;
+    margin-bottom: 2rem;
+    letter-spacing: -0.02em;
+    /* Fallback for browsers that don't support gradient text */
+}
+
+/* Fallback for older browsers */
+@supports not (background-clip: text) {
+    .brand-title {
+        color: #1db954;
+        background: none;
+    }
+}
+
+.step-card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+    .step-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+.step-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 1rem 1.5rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #495057;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.step-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.step-body {
+    padding: 1.5rem;
+}
+
+.form-control, .form-select {
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+    .form-control:focus, .form-select:focus {
+        border-color: #1db954;
+        box-shadow: 0 0 0 0.2rem rgba(29, 185, 84, 0.15);
+        outline: none;
+    }
+
+.btn-modern {
+    border-radius: 12px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    border: none;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-spotify {
+    background: linear-gradient(135deg, #1db954 0%, #1ed760 100%);
+    color: white;
+}
+
+    .btn-spotify:hover {
+        background: linear-gradient(135deg, #1aa34a 0%, #1bc653 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(29, 185, 84, 0.3);
+    }
+
+.btn-youtube {
+    background: linear-gradient(135deg, #ff0000 0%, #ff1744 100%);
+    color: white;
+}
+
+    .btn-youtube:hover {
+        background: linear-gradient(135deg, #e60000 0%, #e6153d 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(255, 23, 68, 0.3);
+    }
+
+.btn-transfer {
+    background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+    color: white;
+}
+
+    .btn-transfer:hover {
+        background: linear-gradient(135deg, #5f3dc4 0%, #9c88ff 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(108, 92, 231, 0.3);
+    }
+
+.btn-modern:disabled {
+    opacity: 0.6;
+    transform: none;
+    box-shadow: none;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 0.5rem;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.track-list {
+    max-height: 300px;
+    overflow-y: auto;
+    border-radius: 12px;
+    border: 1px solid #e9ecef;
+}
+
+.track-item {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f1f3f4;
+    font-size: 0.9rem;
+    transition: background-color 0.2s ease;
+}
+
+    .track-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .track-item:last-child {
+        border-bottom: none;
+    }
+
+.alert-modern {
+    border: none;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+}
+
+.alert-success-modern {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    color: #155724;
+}
+
+.alert-danger-modern {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    color: #721c24;
+}
+
+.alert-info-modern {
+    background: linear-gradient(135deg, #cce7ff 0%, #b3d9ff 100%);
+    color: #004085;
+    text-align: center;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.login-link {
+    color: #1db954;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+    .login-link:hover {
+        color: #1aa34a;
+        text-decoration: underline;
+    }
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    color: #155724;
+    margin-bottom: 1rem;
+}
+
+.playlist-url {
+    word-break: break-all;
+    color: #ff1744;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+    .playlist-url:hover {
+        color: #e6153d;
+        text-decoration: underline;
+    }
+
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .playlist-container {
+        padding: 1rem 0.5rem;
+    }
+
+    .brand-title {
+        font-size: 2rem;
+    }
+
+    .step-header {
+        padding: 1rem;
+        font-size: 1rem;
+    }
+
+    .step-body {
+        padding: 1rem;
+    }
+}
