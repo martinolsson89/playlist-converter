@@ -1,0 +1,407 @@
+﻿@page "/"
+@using System.Text.Json
+@using PlaylistConverter.Client.Services
+@using PlaylistConverter.Shared.Models.Auth
+@using PlaylistConverter.Shared.Models.Youtube
+@inject TokenService Tokens
+@inject PlaylistConverterService Api
+@attribute [RouteAttribute("/home")]
+
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-indigo-600 to-purple-700 shadow-md">
+        <div class="max-w-5xl mx-auto px-4 py-6 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <span class="text-2xl">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" class="size-6">
+                        <path fill-rule="evenodd" d="M19.952 1.651a.75.75 0 0 1 .298.599V16.303a3 3 0 0 1-2.176 2.884l-1.32.377a2.553 2.553 0 1 1-1.403-4.909l2.311-.66a1.5 1.5 0 0 0 1.088-1.442V6.994l-9 2.572v9.737a3 3 0 0 1-2.176 2.884l-1.32.377a2.553 2.553 0 1 1-1.402-4.909l2.31-.66a1.5 1.5 0 0 0 1.088-1.442V5.25a.75.75 0 0 1 .544-.721l10.5-3a.75.75 0 0 1 .658.122Z" clip-rule="evenodd" />
+                    </svg>
+                </span>
+                <h1 class="text-2xl font-bold text-white">Playlist Converter</h1>
+            </div>
+            @if (Tokens.IsAuthenticated)
+            {
+                <div class="flex items-center">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                        <svg class="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                        </svg>
+                        Connected
+                    </span>
+                    <button @onclick="Logout" class="ml-3 text-sm font-medium text-white hover:text-red-100 transition-colors">
+                        Logout
+                    </button>
+                </div>
+            }
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="max-w-5xl mx-auto px-4 py-8">
+        @if (!Tokens.IsAuthenticated)
+        {
+            <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-indigo-500 mb-8">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                    <div class="mb-4 md:mb-0">
+                        <h2 class="text-xl font-semibold text-gray-800">Authentication Required</h2>
+                        <p class="text-gray-600 mt-1">Connect your YouTube account to start converting playlists.</p>
+                    </div>
+                    <a href="login" class="inline-flex items-center px-4 py-2 rounded-lg bg-gradient-to-r from-red-500 to-red-700 text-white font-medium shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
+                        <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                        </svg>
+                        Connect YouTube
+                    </a>
+                </div>
+            </div>
+        }
+        else
+        {
+            <!-- Step 1: Spotify -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6 transform transition-all duration-300 hover:shadow-lg">
+                <div class="bg-gradient-to-r from-green-500 to-green-600 px-6 py-4">
+                    <div class="flex items-center">
+                        <svg class="w-6 h-6 text-white mr-3" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15.18 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.42 1.56-.299.421-1.02.599-1.559.3z" />
+                        </svg>
+                        <h2 class="text-lg font-semibold text-white">Step 1: Import from Spotify</h2>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Spotify Playlist URL or ID</label>
+                        <input class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
+                               @bind="SpotifyPlaylistUrl"
+                               placeholder="https://open.spotify.com/playlist/... or playlist ID" />
+                    </div>
+                    <button class="inline-flex items-center justify-center px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 rounded-lg text-white font-medium shadow-sm transition-colors w-full md:w-auto"
+                            disabled="@(!CanLoadSpotify || IsLoadingSpotify)"
+                            @onclick="LoadSpotifyPlaylist">
+                        @if (IsLoadingSpotify)
+                        {
+                            <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                            <span>Loading...</span>
+                        }
+                        else
+                        {
+                            <span>Load Playlist</span>
+                        }
+                    </button>
+
+                    @if (!string.IsNullOrEmpty(SpotifyError))
+                    {
+                        <div class="mt-4 bg-red-50 border-l-4 border-red-500 p-4 rounded animate-fade-in">
+                            <p class="text-sm text-red-700">Could not load your playlist, please check that you have a <b>valid playlist url</b> or <b>ID</b></p>
+                        </div>
+                    }
+
+                    @if (SpotifyTracks?.Count > 0)
+                    {
+                        <div class="mt-6 animate-fade-in">
+                            <div class="flex items-center mb-3">
+                                <span class="text-xl mr-2">📝</span>
+                                <h3 class="font-semibold text-gray-800">@SpotifyPlaylistName (@(SpotifyTracks.Count) tracks)</h3>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-3 max-h-60 overflow-y-auto">
+                                @foreach (var track in SpotifyTracks.Take(15))
+                                {
+                                    <div class="px-3 py-2 hover:bg-gray-100 rounded flex items-center">
+                                        <span class="text-green-600 mr-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="grey" class="size-6">
+                                                <path fill-rule="evenodd" d="M19.952 1.651a.75.75 0 0 1 .298.599V16.303a3 3 0 0 1-2.176 2.884l-1.32.377a2.553 2.553 0 1 1-1.403-4.909l2.311-.66a1.5 1.5 0 0 0 1.088-1.442V6.994l-9 2.572v9.737a3 3 0 0 1-2.176 2.884l-1.32.377a2.553 2.553 0 1 1-1.402-4.909l2.31-.66a1.5 1.5 0 0 0 1.088-1.442V5.25a.75.75 0 0 1 .544-.721l10.5-3a.75.75 0 0 1 .658.122Z" clip-rule="evenodd" />
+                                            </svg>
+                                        </span>
+                                        <span class="text-sm text-gray-700">@track</span>
+                                    </div>
+                                }
+                                @if (SpotifyTracks.Count > 15)
+                                {
+                                    <div class="text-center py-2 text-xs text-gray-500">
+                                        ...and @(SpotifyTracks.Count - 15) more tracks
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Step 2: YouTube -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6 transform transition-all duration-300 hover:shadow-lg">
+                <div class="bg-gradient-to-r from-red-600 to-red-700 px-6 py-4">
+                    <div class="flex items-center">
+                        <svg class="w-6 h-6 text-white mr-3" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                        </svg>
+                        <h2 class="text-lg font-semibold text-white">Step 2: Create YouTube Playlist</h2>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-4">
+                        <div class="md:col-span-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Playlist Title</label>
+                            <input class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
+                                   @bind="YoutubeTitle"
+                                   placeholder="My Awesome Playlist" />
+                        </div>
+                        <div class="md:col-span-3">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Privacy</label>
+                            <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
+                                    @bind="YoutubePrivacy">
+                                <option value="private">🔒 Private</option>
+                                <option value="unlisted">🔗 Unlisted</option>
+                                <option value="public">🌍 Public</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-3 flex items-end">
+                            <button class="inline-flex items-center justify-center px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 rounded-lg text-white font-medium shadow-sm transition-colors w-full"
+                                    disabled="@(!CanCreateYoutube || CreatingYoutube)"
+                                    @onclick="CreateYoutubePlaylist">
+                                @if (CreatingYoutube)
+                                {
+                                    <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                                    <span>Creating...</span>
+                                }
+                                else
+                                {
+                                    <span>@(CreatedYoutubePlaylistId is null ? "Create Playlist" : "Recreate")</span>
+                                }
+                            </button>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(CreateError))
+                    {
+                        <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded animate-fade-in">
+                            <p class="text-sm text-red-700">@CreateError</p>
+                        </div>
+                    }
+
+                    @if (CreatedYoutubePlaylistId is not null)
+                    {
+                        <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded animate-fade-in">
+                            <h4 class="font-medium text-green-800">✅ Playlist Created!</h4>
+                            <p class="mt-1 text-sm text-green-700">
+                                YouTube Playlist ID: <code class="bg-green-100 px-2 py-1 rounded text-xs">@CreatedYoutubePlaylistId</code>
+                            </p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Step 3: Transfer -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden transform transition-all duration-300 hover:shadow-lg">
+                <div class="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4">
+                    <div class="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" class="size-6 mr-3">
+                            <path fill-rule="evenodd" d="M12 5.25c1.213 0 2.415.046 3.605.135a3.256 3.256 0 0 1 3.01 3.01c.044.583.077 1.17.1 1.759L17.03 8.47a.75.75 0 1 0-1.06 1.06l3 3a.75.75 0 0 0 1.06 0l3-3a.75.75 0 0 0-1.06-1.06l-1.752 1.751c-.023-.65-.06-1.296-.108-1.939a4.756 4.756 0 0 0-4.392-4.392 49.422 49.422 0 0 0-7.436 0A4.756 4.756 0 0 0 3.89 8.282c-.017.224-.033.447-.046.672a.75.75 0 1 0 1.497.092c.013-.217.028-.434.044-.651a3.256 3.256 0 0 1 3.01-3.01c1.19-.09 2.392-.135 3.605-.135Zm-6.97 6.22a.75.75 0 0 0-1.06 0l-3 3a.75.75 0 1 0 1.06 1.06l1.752-1.751c.023.65.06 1.296.108 1.939a4.756 4.756 0 0 0 4.392 4.392 49.413 49.413 0 0 0 7.436 0 4.756 4.756 0 0 0 4.392-4.392c.017-.223.032-.447.046-.672a.75.75 0 0 0-1.497-.092c-.013.217-.028.434-.044.651a3.256 3.256 0 0 1-3.01 3.01 47.953 47.953 0 0 1-7.21 0 3.256 3.256 0 0 1-3.01-3.01 47.759 47.759 0 0 1-.1-1.759L6.97 15.53a.75.75 0 0 0 1.06-1.06l-3-3Z" clip-rule="evenodd" />
+                        </svg>
+                        <h2 class="text-lg font-semibold text-white">Step 3: Transfer Tracks</h2>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <button class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 disabled:from-gray-400 disabled:to-gray-500 rounded-lg text-white font-medium shadow-md transition-colors w-full md:w-auto"
+                            disabled="@(!CanTransfer || Transferring)"
+                            @onclick="TransferTracks">
+                        @if (Transferring)
+                        {
+                            <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                            <span>Transferring tracks...</span>
+                        }
+                        else
+                        {
+                            <span>🚀 Transfer All Tracks</span>
+                        }
+                    </button>
+
+                    @if (!string.IsNullOrEmpty(TransferError))
+                    {
+                        <div class="mt-4 bg-red-50 border-l-4 border-red-500 p-4 rounded animate-fade-in">
+                            <p class="text-sm text-red-700">@TransferError</p>
+                        </div>
+                    }
+
+                    @if (IsTransferDone && string.IsNullOrEmpty(TransferError))
+                    {
+                        <div class="mt-4 bg-green-50 border-l-4 border-green-500 p-4 rounded animate-fade-in">
+                            <h4 class="font-medium text-green-800">🎉 Transfer Complete!</h4>
+                            <p class="mt-2 text-sm text-green-700">
+                                Your playlist is ready:
+                                <a class="text-purple-600 hover:text-purple-800 font-medium underline"
+                                   href="@YoutubePlaylistUrl" target="_blank" rel="noopener">
+                                    @YoutubePlaylistUrl
+                                </a>
+                            </p>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-12 border-t border-gray-200 py-6">
+        <div class="max-w-5xl mx-auto px-4 text-center text-gray-500 text-sm">
+            <p>© 2025 Playlist Converter - Convert music between platforms</p>
+        </div>
+    </footer>
+</div>
+
+@code {
+    // Code remains the same as original
+    // Step 1
+    private string SpotifyPlaylistUrl = "";
+    private bool IsLoadingSpotify;
+    private string? SpotifyError;
+    private string? SpotifyPlaylistName;
+    private List<string> SpotifyTracks = new();
+
+    // Step 2
+    private string YoutubeTitle = "";
+    private string YoutubePrivacy = "private";
+    private bool CreatingYoutube;
+    private string? CreateError;
+    private string? CreatedYoutubePlaylistId;
+
+    // Step 3
+    private bool Transferring;
+    private string? TransferError;
+    private TransferResponse? TransferResult;
+    private string YoutubePlaylistUrl => $"https://www.youtube.com/playlist?list={CreatedYoutubePlaylistId}";
+    private bool IsTransferDone = false;
+
+    private bool CanLoadSpotify => !string.IsNullOrWhiteSpace(SpotifyPlaylistUrl);
+    private bool CanCreateYoutube => !string.IsNullOrWhiteSpace(YoutubeTitle) && SpotifyTracks.Count > 0 && Tokens.IsAuthenticated;
+    private bool CanTransfer => CreatedYoutubePlaylistId is not null && SpotifyTracks.Count > 0 && Tokens.IsAuthenticated && !Transferring;
+
+    private async Task LoadSpotifyPlaylist()
+    {
+        SpotifyError = null;
+        SpotifyTracks.Clear();
+        SpotifyPlaylistName = null;
+        CreatedYoutubePlaylistId = null;
+        TransferResult = null;
+
+        if (!CanLoadSpotify) return;
+        IsLoadingSpotify = true;
+        try
+        {
+            var list = await Api.GetSpotifyPlaylistAsync(SpotifyPlaylistUrl);
+            if (list is null || list.Count == 0)
+            {
+                SpotifyError = "Playlist not found or empty.";
+                return;
+            }
+
+            SpotifyPlaylistName = list[0];
+            SpotifyTracks = list.Skip(1).ToList();
+
+            YoutubeTitle = SpotifyPlaylistName + " (Copy)";
+        }
+        catch (Exception ex)
+        {
+            SpotifyError = ex.Message;
+        }
+        finally
+        {
+            IsLoadingSpotify = false;
+        }
+    }
+
+    private async Task CreateYoutubePlaylist()
+    {
+        if (!CanCreateYoutube) return;
+        CreateError = null;
+        TransferResult = null;
+        CreatingYoutube = true;
+        try
+        {
+            var req = new CreatePlaylistRequest
+            {
+                Title = YoutubeTitle.Trim(),
+                PrivacyStatus = YoutubePrivacy,
+                AccessToken = Tokens.YoutubeToken!
+            };
+            CreatedYoutubePlaylistId = await Api.CreateYoutubePlaylistAsync(req);
+        }
+        catch (Exception ex)
+        {
+            CreateError = ex.Message;
+            CreatedYoutubePlaylistId = null;
+        }
+        finally
+        {
+            CreatingYoutube = false;
+        }
+    }
+
+    private async Task TransferTracks()
+    {
+        if (!CanTransfer || CreatedYoutubePlaylistId is null) return;
+        TransferError = null;
+        TransferResult = null;
+        Transferring = true;
+        try
+        {
+            var spotifyId = ExtractSpotifyId(SpotifyPlaylistUrl);
+            var result = await Api.AddFromSpotifyAsync(new AddFromSpotifyRequest
+            {
+                SpotifyPlaylistId = spotifyId,
+                YouTubePlaylistId = CreatedYoutubePlaylistId,
+                YouTubeAccessToken = Tokens.YoutubeToken!
+            });
+        }
+        catch (Exception ex)
+        {
+            TransferError = ex.Message;
+        }
+        finally
+        {
+            Transferring = false;
+            IsTransferDone = true;
+        }
+    }
+
+    private string ExtractSpotifyId(string input)
+    {
+        if (string.IsNullOrWhiteSpace(input)) return "";
+        input = Uri.UnescapeDataString(input);
+        if (!input.Contains("/")) return input;
+        if (input.StartsWith("spotify:playlist:"))
+            return input.Split(':')[2];
+        try
+        {
+            var uri = new Uri(input);
+            var segments = uri.AbsolutePath.Split('/', StringSplitOptions.RemoveEmptyEntries);
+            var idx = Array.FindIndex(segments, s => s.Equals("playlist", StringComparison.OrdinalIgnoreCase));
+            if (idx >= 0 && idx < segments.Length - 1)
+                return segments[idx + 1];
+        }
+        catch
+        {
+        }
+
+        return input;
+    }
+
+    private void Logout()
+    {
+        Tokens.YoutubeToken = null;
+    }
+
+    // Helper models
+    private class TransferResponse
+    {
+        public int TotalTracks { get; set; }
+        public int SuccessfullyAdded { get; set; }
+        public List<TrackTransferDetail> Results { get; set; } = new();
+    }
+
+    private class TrackTransferDetail
+    {
+        public string? Track { get; set; }
+        public string? VideoId { get; set; }
+        public string? Status { get; set; }
+        public string? Error { get; set; }
+    }
+}

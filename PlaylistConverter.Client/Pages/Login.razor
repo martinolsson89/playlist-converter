@@ -1,0 +1,80 @@
+@page "/login"
+@using PlaylistConverter.Client.Services
+@inject NavigationManager Nav
+@inject PlaylistConverterService Api
+
+<div class="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-700 flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-white rounded-xl shadow-xl overflow-hidden">
+        <div class="p-8">
+            <div class="flex justify-center mb-6">
+                <div class="h-16 w-16 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" class="size-6">
+                        <path fill-rule="evenodd" d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-center text-gray-800 mb-2">Welcome to Playlist Converter</h1>
+            <p class="text-gray-500 text-center mb-8">Sign in to start converting your playlists</p>
+
+            @if (busy)
+            {
+                <div class="flex flex-col items-center justify-center py-4">
+                    <div class="animate-spin rounded-full h-10 w-10 border-4 border-indigo-600 border-t-transparent mb-4"></div>
+                    <p class="text-gray-700">Redirecting to Google...</p>
+                </div>
+            }
+            else
+            {
+                <button @onclick="LoginWithYoutube" disabled="@busy"
+                        class="relative w-full flex items-center justify-center bg-white hover:bg-gray-50 text-gray-800 font-medium py-3 px-4 border border-gray-300 rounded-lg shadow-sm transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50">
+                    <div class="absolute left-4 flex items-center justify-center">
+                        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M23.498 6.186a2.999 2.999 0 0 0-2.109-2.122C19.505 3.546 12 3.546 12 3.546s-7.505 0-9.389.518A2.999 2.999 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a2.999 2.999 0 0 0 2.109 2.122C4.495 20.454 12 20.454 12 20.454s7.505 0 9.389-.518a2.999 2.999 0 0 0 2.109-2.122C24 15.93 24 12 24 12s0-3.93-.502-5.814z" fill="#FF0000" />
+                            <path d="M9.546 15.569V8.431L15.818 12l-6.272 3.569z" fill="#FFFFFF" />
+                        </svg>
+                    </div>
+                    <span>Sign in with YouTube</span>
+                </button>
+            }
+
+            @if (!string.IsNullOrEmpty(error))
+            {
+                <div class="mt-4 bg-red-50 border-l-4 border-red-500 p-4 rounded">
+                    <div class="flex items-center">
+                        <svg class="h-5 w-5 text-red-500 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+                        </svg>
+                        <span class="text-sm text-red-700">@error</span>
+                    </div>
+                </div>
+            }
+
+            <p class="mt-8 text-xs text-center text-gray-500">
+                By signing in, you agree to our Terms of Service and Privacy Policy
+            </p>
+        </div>
+    </div>
+</div>
+
+@code {
+    private bool busy;
+    private string? error;
+
+    private async Task LoginWithYoutube()
+    {
+        try
+        {
+            busy = true;
+            error = null;
+            // After auth & token exchange API will redirect to /auth-callback
+            var callback = $"{Nav.BaseUri}auth-callback";
+            var authUrl = await Api.GetYoutubeAuthUrlAsync(callback);
+            Nav.NavigateTo(authUrl, forceLoad: true);
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+            busy = false;
+        }
+    }
+}

@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36408.4
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlaylistConverter.Client", "playlist-converter.Client\PlaylistConverter.Client.csproj", "{2DAFC2FC-5D35-4FED-8B3A-EF72A5D73DBD}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlaylistConverter.Shared", "PlaylistConverter.Shared\PlaylistConverter.Shared.csproj", "{9BF9FEA6-E7A2-4474-8724-F51EB4F684B6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlaylistConverter.Api", "PlaylistConverter.Api\PlaylistConverter.Api.csproj", "{3ED11171-AB0F-2F6F-794B-3399C391F4C3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlaylistConverter.Client", "PlaylistConverter.Client\PlaylistConverter.Client.csproj", "{7C771B44-07E0-209B-FA68-7E53D29A836C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,10 +15,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2DAFC2FC-5D35-4FED-8B3A-EF72A5D73DBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2DAFC2FC-5D35-4FED-8B3A-EF72A5D73DBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2DAFC2FC-5D35-4FED-8B3A-EF72A5D73DBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2DAFC2FC-5D35-4FED-8B3A-EF72A5D73DBD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9BF9FEA6-E7A2-4474-8724-F51EB4F684B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9BF9FEA6-E7A2-4474-8724-F51EB4F684B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9BF9FEA6-E7A2-4474-8724-F51EB4F684B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -27,6 +23,10 @@ Global
 		{3ED11171-AB0F-2F6F-794B-3399C391F4C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3ED11171-AB0F-2F6F-794B-3399C391F4C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3ED11171-AB0F-2F6F-794B-3399C391F4C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C771B44-07E0-209B-FA68-7E53D29A836C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C771B44-07E0-209B-FA68-7E53D29A836C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C771B44-07E0-209B-FA68-7E53D29A836C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C771B44-07E0-209B-FA68-7E53D29A836C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
