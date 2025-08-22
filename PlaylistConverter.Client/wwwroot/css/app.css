@@ -1101,3 +1101,19 @@ video {
     justify-content: space-between;
   }
 }
+/* Add this at the end of the file */
+@keyframes trackFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-track-fade {
+    animation: trackFadeIn 0.5s ease-out forwards;
+}
