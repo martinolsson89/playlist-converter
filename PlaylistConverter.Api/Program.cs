@@ -30,7 +30,8 @@ builder.Services.AddCors(policy =>
 {
     policy.AddPolicy("CorsAllAccessPolicy", opt =>
         opt.WithOrigins(
-            "https://localhost:7294"
+            "https://localhost:7294",
+            "https://gentle-cliff-08c3f2203.1.azurestaticapps.net"
             )
             .AllowAnyMethod()
             .AllowAnyHeader()
@@ -38,7 +39,7 @@ builder.Services.AddCors(policy =>
 });
 
 var app = builder.Build();
-
+app.UseStaticFiles();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -50,7 +51,6 @@ app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Playlist Converter API V1");
 });
-
 app.UseHttpsRedirection();
 
 app.UseCors("CorsAllAccessPolicy");
