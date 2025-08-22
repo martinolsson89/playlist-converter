@@ -38,10 +38,10 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_AGREEABLE_SKY_04E56E903 }}
           action: upload
-          app_location: "PlaylistConverter.Client"
-          output_location: "publish/wwwroot"          # IMPORTANT: published output
-          # Remove api_location because you’re using an external App Service API.
-          # If you keep it, it must be a Functions API. Otherwise omit.
+          app_location: "./PlaylistConverter.Client"
+          output_location: "publish/wwwroot"
+          production_branch: master
+          skip_app_build: true        
           skip_api_build: true
 
   close_pull_request_job:
