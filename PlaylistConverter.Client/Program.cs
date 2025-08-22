@@ -8,7 +8,7 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-// Config-based API base
+// Config-based API base !
 var apiBaseSetting = builder.Configuration["ApiBaseUrl"];
 var apiBase = string.IsNullOrWhiteSpace(apiBaseSetting)
     ? builder.HostEnvironment.BaseAddress
