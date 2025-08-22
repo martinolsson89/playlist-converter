@@ -1,12 +1,24 @@
 {
   "navigationFallback": {
     "rewrite": "/index.html",
-    "exclude": [ "/_framework/*", "/css/*", "/js/*", "/api/*" ]
+    "exclude": [
+      "/_framework/*",
+      "/css/*",
+      "/*.css",
+      "/*.js",
+      "/*.png",
+      "/*.ico",
+      "/api/*"
+    ]
   },
   "routes": [
     {
       "route": "/api/*",
       "allowedRoles": [ "anonymous" ]
     }
-  ]
+  ],
+  "mimeTypes": {
+    ".css": "text/css",
+    ".wasm": "application/wasm"
+  }
 }
