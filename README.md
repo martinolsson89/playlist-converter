@@ -36,5 +36,5 @@ Set these environment variables (User Secrets recommended for local dev):
 - YOUTUBE_API_KEY
 
 ## Live Demo
-See live demo at: https://gentle-cliff-08c3f2203.1.azurestaticapps.net/
-Contact me at martinolsson89@gmail.com if you want to try out the app!
+- See live demo at: https://gentle-cliff-08c3f2203.1.azurestaticapps.net/
+- Contact me at martinolsson89@gmail.com if you want to try out the app!
